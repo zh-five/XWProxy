@@ -14,3 +14,5 @@ src/golang.org
 src/github.com
 pkg
 test.go
+hosts.txt.pid
+xwproxy_*
