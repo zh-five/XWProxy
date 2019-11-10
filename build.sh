@@ -25,18 +25,28 @@ export GOPATH="$CURDIR"
 echo '加载包...'
 myget golang.org/x/sys
 go get github.com/fsnotify/fsnotify
-go get github.com/icattlecoder/godaemon
-#go get github.com/kballard/go-shellquote
-#go get github.com/openatx/androidutils
-#go get github.com/sevlyar/go-daemon
-#go get github.com/openatx/androidutils
 
 echo '加载完成!'
 echo
 #exit;
 
 echo '编译 ...'
-go build  -o xwproxy  main.go
+
+rm -f xwproxy_*
+echo 'mac 64...'
+GOOS=darwin GOARCH=amd64 go build  -o xwproxy_mac64  main.go
+zip -r xwproxy_mac64.zip xwproxy_mac64
+
+echo 'linux 64...'
+GOOS=linux GOARCH=amd64 go build  -o xwproxy_linux64  main.go
+tar zcvf xwproxy_linux64.tar.gz xwproxy_linux64
+
+echo 'windows 64 ...'
+GOOS=windows GOARCH=amd64 go build  -o xwproxy_win64.exe  main.go
+
+echo 'windows 32 ...'
+GOOS=windows GOARCH=386 go build  -o xwproxy_win32.exe  main.go
+
 echo '编译完成!'
 echo
 
@@ -44,5 +54,3 @@ echo
 export GOPATH="$OLDGOPATH"
 
 
-#./xwproxy -c ./hosts.txt
-#./xwproxy -h

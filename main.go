@@ -83,7 +83,7 @@ XWProxy : http(https)代理工具
 项目主页 <https://github.com/zh-five/XWProxy>
 问题反馈 <https://github.com/zh-five/XWProxy/issues>
 `
-		fmt.Fprintf(flag.CommandLine.Output(), "Usage1 of %s:\n", os.Args[0])
+		fmt.Fprintf(flag.CommandLine.Output(), "Usage of %s:\n", os.Args[0])
 		flag.PrintDefaults()
 		fmt.Fprintln(flag.CommandLine.Output(), desc)
 	}
