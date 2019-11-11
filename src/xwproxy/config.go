@@ -147,7 +147,7 @@ func (cfg *FileConfig) init() {
 //默认配置列表
 func (cfg *FileConfig) defaultOptions() map[string]string {
 	m := make(map[string]string)
-	m["forwardedIP"] = ""  //等同 'false'
+	m["forwardedIP"] = "0"  //默认匿名
 
 	return m
 }

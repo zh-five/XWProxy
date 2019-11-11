@@ -194,7 +194,7 @@ func confFileData() []byte{
 
 # 第2个代理配置开始
 ##! addr = 127.0.0.1:8024
-##! forwardIP = 1
+##! forwardedIP = 1
 
 #192.168.6.33 abc.com
 `
