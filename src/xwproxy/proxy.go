@@ -16,11 +16,11 @@ type Pxy struct {
 //启动代理服务,可能是多个
 func Run(cfg *FileConfig) {
 	for addr, _ := range cfg.options{
-		go func() {
+		go func(addr string) {
 			pxy := &Pxy{cfg, addr}
 			log.Printf("HttpPxoy to runing on %s \n", addr)
 			log.Fatalln(http.ListenAndServe(addr, pxy))
-		}()
+		}(addr)
 	}
 
 }
