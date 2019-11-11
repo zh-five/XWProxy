@@ -58,7 +58,7 @@ func (p *Pxy) HTTP(rw http.ResponseWriter, req *http.Request) {
 		} else {
 			outReq.URL.Host = ip
 		}
-		log.Println("http :", outReq.Host, "->", ip)
+		log.Println(p.addr, "http", outReq.Host, "->", ip)
 	}
 
 	//  处理匿名代理
@@ -126,7 +126,7 @@ func (p *Pxy) HTTPS(rw http.ResponseWriter, req *http.Request) {
 		} else {
 			host = ip
 		}
-		log.Println("https :", req.Host, "->", ip)
+		log.Println(p.addr, "https", req.Host, "->", ip)
 	}
 
 	// 连接远程
