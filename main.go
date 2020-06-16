@@ -18,10 +18,10 @@ const DAEMON_ARG = "DAEMON"
 
 func main() {
 	// 参数处理
-	confFile := flag.String("c", "", "配置文件(不存在时将尝试创建默认配置文件")
-	logFile := flag.String("log", "", "日志文件,无则不记录")
-	isTest := flag.Bool("t", false, "测试配置文件")
-	isDaemon := flag.Bool("d", false, "后台运行")
+	confFile := flag.String("c", "", "必须.配置文件(指定文件不存在时将尝试创建默认配置文件")
+	isTest := flag.Bool("t", false, "检查指定配置文件是否有错误")
+	isDaemon := flag.Bool("d", false, "可选,是否后台运行")
+	logFile := flag.String("log", "", "可选.日志文件,后台运行时有效,无则不记录")
 	usage()      //修改默认的帮助信息
 	flag.Parse() //解析
 
@@ -72,7 +72,7 @@ func usage() {
 	flag.Usage = func() {
 		desc := `
 XWProxy : http(https)代理工具
-版本 0.10 
+版本 1.0 
 项目主页 <https://github.com/zh-five/XWProxy>
 问题反馈 <https://github.com/zh-five/XWProxy/issues>
 `
@@ -173,8 +173,8 @@ func confFileData() []byte {
 
 
 # 第2个代理配置开始
-@addr = 127.0.0.1:8024
-@forwardedIP = 1
+#@addr = 127.0.0.1:8024
+#@forwardedIP = 1
 
 #192.168.6.33 abc.com
 `
