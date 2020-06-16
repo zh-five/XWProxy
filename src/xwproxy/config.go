@@ -53,9 +53,11 @@ func (cfg *FileConfig) Parse() bool {
 		}
 
 		if l[0] == '#' { //注释
-			if len(l) > 1 && l[1] == '!' { //选项配置行 '#! addr = xxx'
-				cfg.parseOption(l)
-			}
+			continue
+		}
+
+		if len(l) > 0 && l[0] == '@' { //选项配置行 '@addr = xxx'
+			cfg.parseOption(l)
 			continue
 		}
 
@@ -154,7 +156,7 @@ func (cfg *FileConfig) defaultOptions() map[string]string {
 
 //解析option行 : '#! addr = 127.0.0.1 '
 func (cfg *FileConfig) parseOption(l string) {
-	s := strings.Split(l[2:], "=")
+	s := strings.Split(l[1:], "=")
 	if len(s) != 2 {
 		cfg.err = true
 		cfg.debug("选项配置格式错误, 忽略:", l)

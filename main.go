@@ -4,11 +4,11 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
+	"github.com/zh-five/xdaemon"
 	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
-	"strconv"
 	"strings"
 	"xwproxy"
 )
@@ -18,27 +18,21 @@ const DAEMON_ARG = "DAEMON"
 
 func main() {
 	// 参数处理
-	file := flag.String("c", "", "配置文件(不存在时将尝试创建默认配置文件")
-	isStop := flag.Bool("s", false, "停止程序")
+	confFile := flag.String("c", "", "配置文件(不存在时将尝试创建默认配置文件")
+	logFile := flag.String("log", "", "日志文件,无则不记录")
 	isTest := flag.Bool("t", false, "测试配置文件")
 	isDaemon := flag.Bool("d", false, "后台运行")
 	usage()      //修改默认的帮助信息
 	flag.Parse() //解析
 
 	//配置文件路径检查和处理
-	if *file == "" {
+	if *confFile == "" {
 		flag.Usage()
 		return
 	}
-	absFile, err := filepath.Abs(*file)
+	absFile, err := filepath.Abs(*confFile)
 	if err != nil {
 		fmt.Println("配置文件路径错误:", err)
-		return
-	}
-
-	//停止
-	if *isStop {
-		toStop(absFile)
 		return
 	}
 
@@ -62,8 +56,7 @@ func main() {
 
 	//后台运行()
 	if *isDaemon && !inSlice(DAEMON_ARG, flag.Args()) {
-		toDaemon(absFile)
-		return
+		xdaemon.Background(*logFile, true)
 	}
 
 	//启动代理服务
@@ -100,24 +93,9 @@ func inSlice(val string, s []string) bool {
 	return false
 }
 
-//后台启动
-func toDaemon(confFile string) {
-	f, _ := filepath.Abs(os.Args[0]) //绝对路径
-	args := append(os.Args[1:], DAEMON_ARG, ">", "/dev/null", "2>&1", "&")
-
-	//启动
-	cmd := exec.Command(f, args ...)
-	cmd.Start()
-
-	//保存pid
-	ioutil.WriteFile(confFile+".pid", []byte(strconv.Itoa(cmd.Process.Pid)), 0666)
-
-	fmt.Println("启动后台进程:", cmd.Process.Pid)
-}
-
 //停止后台程序
 func toStop(confFile string) {
-	pid, err := ioutil.ReadFile(confFile+".pid")
+	pid, err := ioutil.ReadFile(confFile + ".pid")
 	if err != nil {
 		fmt.Println("停止后台程序失败:", err)
 		return
@@ -129,7 +107,7 @@ func toStop(confFile string) {
 
 //检查配置文件, 不存在则尝试创建
 func checkFile(absFile string) bool {
-	_,err := os.Stat(absFile)
+	_, err := os.Stat(absFile)
 	if err == nil {
 		return true
 	}
@@ -149,7 +127,7 @@ func checkFile(absFile string) bool {
 		return false
 	}
 
-	err = ioutil.WriteFile(absFile,confFileData(), 0666)
+	err = ioutil.WriteFile(absFile, confFileData(), 0666)
 	if err == nil {
 		fmt.Println("已经成功创建默认配置文件:", absFile)
 	} else {
@@ -159,26 +137,28 @@ func checkFile(absFile string) bool {
 	return false
 }
 
-func confFileData() []byte{
+func confFileData() []byte {
 	text := `############################################################################
 #  xwproxy 代理工具配置文件说明
-#  1.'#'开头到行尾是注释内容,解析时被忽略
-#  2.但'#!'开头的行为选项配置行
-#  3.一个addr选项对应一个代理配置, 至少一个, 可配置多个
-#  4.修改配置文件后, 实时生效. 但addr选项除外, 有增删或修改addr时, 应重启服务
+#  1.'#'开头的行为注释
+#  2.一个@addr选项对应一个代理配置, 至少一个, 可配置多个
+#  3.修改配置文件后, 实时生效. 但@addr选项除外, 有增删或修改@addr时, 应重启服务
 ############################################################################
 
 
 # 监听地址选项, 必须. (一个代理配置的开始)
-# 包含ip地址和端口号
-#! addr = 127.0.0.1:8033
+#只允许本机访问
+@addr = 127.0.0.1:8033  
+#不限ip可以访问
+#@addr = :8033  
+
 
 # 转发ip选项, 可选, 默认为0.
 # 影响转发请求时head里'X-Forwarded-For'的设置, 有三种取值:
 # 0  : 不设置'X-Forwarded-For'
 # 1  : 按照真实情况设置'X-Forwarded-For'
-# ip : 设置为指定的ip
-#! forwardedIP = 0
+# 127.0.0.1 : 可以指定的为任意ip
+@forwardedIP = 0
 
 
 # 以下是指定host的配置, 格式兼容系统的hosts文件
@@ -193,8 +173,8 @@ func confFileData() []byte{
 
 
 # 第2个代理配置开始
-##! addr = 127.0.0.1:8024
-##! forwardedIP = 1
+@addr = 127.0.0.1:8024
+@forwardedIP = 1
 
 #192.168.6.33 abc.com
 `
