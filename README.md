@@ -1,9 +1,8 @@
 # XWProxy
 ## 一、简介
-XWProxy是我个人开发的一个http(https)代理小工具（取名困难症,
-就把我名字的首字母xw加在Proxy单词前面了^_^）。 
+XWProxy是一个http(https)代理软件。 
 在开发web项目过程中, 经常需要切换各种开发环境、测试环境等等。结合此工具可以很方便的
-配置和切换各种环境
+配置和切换各种环境, 以及用于手机app测试.
 
 ![工作原理](https://github.com/zh-five/XWProxy/blob/master/work.png)
 
