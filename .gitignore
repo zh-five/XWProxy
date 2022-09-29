@@ -16,3 +16,4 @@ pkg
 test.go
 hosts.txt.pid
 xwproxy_*
+bin/xwproxy
