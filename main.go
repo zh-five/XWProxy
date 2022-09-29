@@ -4,16 +4,18 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
-	"github.com/zh-five/xdaemon"
 	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
-	"xwproxy"
+
+	"xwp/xwproxy"
+
+	"github.com/zh-five/xdaemon"
 )
 
-//程序主动启动后台运行的标识参数
+// 程序主动启动后台运行的标识参数
 const DAEMON_ARG = "DAEMON"
 
 func main() {
@@ -67,12 +69,12 @@ func main() {
 
 }
 
-//修改默认的帮助信息
+// 修改默认的帮助信息
 func usage() {
 	flag.Usage = func() {
 		desc := `
 XWProxy : http(https)代理工具
-版本 1.0 
+版本 1.1 
 项目主页 <https://github.com/zh-five/XWProxy>
 问题反馈 <https://github.com/zh-five/XWProxy/issues>
 `
@@ -82,7 +84,7 @@ XWProxy : http(https)代理工具
 	}
 }
 
-//切片中是否有某个值
+// 切片中是否有某个值
 func inSlice(val string, s []string) bool {
 	for _, v := range s {
 		if val == v {
@@ -93,7 +95,7 @@ func inSlice(val string, s []string) bool {
 	return false
 }
 
-//停止后台程序
+// 停止后台程序
 func toStop(confFile string) {
 	pid, err := ioutil.ReadFile(confFile + ".pid")
 	if err != nil {
@@ -105,7 +107,7 @@ func toStop(confFile string) {
 	cmd.Start()
 }
 
-//检查配置文件, 不存在则尝试创建
+// 检查配置文件, 不存在则尝试创建
 func checkFile(absFile string) bool {
 	_, err := os.Stat(absFile)
 	if err == nil {
